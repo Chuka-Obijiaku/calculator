@@ -15,6 +15,9 @@ for (let i = 0; i < buttons.length; i++) {
         
         
         if (validateInput(value)) {
+            if (value != "=") {
+                displayOutput.innerHTML = "";
+            }
             if (value === "clear") {
                 input = '';
                 displayInput.innerHTML = '';
