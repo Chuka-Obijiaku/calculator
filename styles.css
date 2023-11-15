@@ -95,16 +95,16 @@ font-weight: 700;
 
 /*  || MODULES */
 
-.btn--operator span{
+.btn--operator {
     color: #EB6666;
 
 }
 
-.btn--action span {
+.btn--action {
     color: #26FED7;
 }
 
-.display--red {
+.display--operator {
     color: #EB6666;
 }
 
