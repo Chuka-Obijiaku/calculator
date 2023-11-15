@@ -98,10 +98,12 @@ function evaluateInput (inputString) {
 }
 
 function addSub(evalArray) {
+    evalArray = multDivide(evalArray);
     let intResult = parseInt(evalArray[0]);
     for (let i = 1; i < evalArray.length - 1; i += 2) {
         if (evalArray[i] == "+") {
             intResult += parseInt(evalArray[i+1]);
+            
         } else {
             intResult -= parseInt(evalArray[i+1]);
         }
@@ -109,6 +111,25 @@ function addSub(evalArray) {
     }
 
     return intResult;
+}
+
+function multDivide(evalArray) {
+    for (let i = 1; i < evalArray.length - 1; i += 2) {
+        if (evalArray[i] == "*") {
+            let lastNum = parseInt(evalArray[i - 1]);
+            lastNum *= parseInt(evalArray[i+1]) 
+            evalArray[i-1] = lastNum.toString();
+            evalArray.splice(i, 2);
+            i -= 2;
+        } else if (evalArray[i] == "/") {
+            let lastNum = parseInt(evalArray[i - 1]);
+            lastNum /= parseInt(evalArray[i+1]) 
+            evalArray[i-1] = lastNum.toString();
+            evalArray.splice(i, 2);
+            i -= 2;
+        }
+    }
+    return evalArray;
 }
 
 function getInputArray(str) {
