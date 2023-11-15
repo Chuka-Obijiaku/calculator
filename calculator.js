@@ -1,6 +1,7 @@
 const buttons = document.querySelectorAll('.btn');
 const displayInput = document.querySelector('.display__input');
 const displayOutput = document.querySelector('.display__output');
+const operators = ["+", "-", "*", "/"];
 
 let input = "";
 
@@ -63,7 +64,7 @@ for (let i = 0; i < buttons.length; i++) {
                 displayInput.innerHTML = cleantInput(input);
                 
             }else if (value === '=') {
-                let result = eval(input);
+                let result = evaluateInput(input);
                 
                 displayInput.innerHTML = cleantInput(input);
                 displayOutput.innerHTML = cleanOutput(result);
@@ -82,6 +83,50 @@ for (let i = 0; i < buttons.length; i++) {
         
     })
     
+}
+
+
+function evaluateInput (inputString) {
+
+    inputArray = getInputArray(inputString) ;
+    console.log(inputArray);
+    let addSubResult = addSub(inputArray);
+    console.log(addSubResult);
+    return addSubResult;
+    
+    
+}
+
+function addSub(evalArray) {
+    let intResult = parseInt(evalArray[0]);
+    for (let i = 1; i < evalArray.length - 1; i += 2) {
+        if (evalArray[i] == "+") {
+            intResult += parseInt(evalArray[i+1]);
+        } else {
+            intResult -= parseInt(evalArray[i+1]);
+        }
+        
+    }
+
+    return intResult;
+}
+
+function getInputArray(str) {
+    let count = 0;
+    let strArray = [''];
+       
+    for (let i = 0; i < str.length; i++) {
+        if(operators.includes(str[i])) {
+            count += 2;
+            strArray.push(str[i]);
+            strArray.push("");
+        } else {
+            strArray[count] += str[i];
+    
+        }
+    }
+    return strArray;
+
 }
 
 function cleantInput(input) {
@@ -134,7 +179,6 @@ function cleanOutput(output) {
 
 function validateInput (value) {
     let lastInput = input.slice(-1);
-    let operators = ["+", "-", "*", "/"]
 
     if (value == "." && lastInput == ".") {
         return false;
