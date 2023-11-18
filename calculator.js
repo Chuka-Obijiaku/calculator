@@ -1,15 +1,15 @@
 const buttons = document.querySelectorAll('.btn');
 const displayInput = document.querySelector('.display__input');
 const displayOutput = document.querySelector('.display__output');
-const operators = ["+", "-", "*", "/"];
+const operators = ["+", "-", "*", "/", "%"];
 
 let input = "";
 
-console.log();
+
 
 for (let i = 0; i < buttons.length; i++) {
     const value = buttons[i].dataset.btn;
-    console.log(value);
+
     
     buttons[i].addEventListener('click',  ()=> {
         
@@ -90,25 +90,25 @@ for (let i = 0; i < buttons.length; i++) {
 
 
 function evaluateInput (inputString) {
-
+    console.log(inputString);
     inputArray = getInputArray(inputString) ;
     console.log(inputArray);
     let addSubResult = addSub(inputArray);
-    console.log(addSubResult);
-    return addSubResult;
+    return Math.round(addSubResult * 100) / 100;
     
     
 }
 
 function addSub(evalArray) {
     evalArray = multDivide(evalArray);
-    let intResult = parseInt(evalArray[0]);
+    console.log(evalArray);
+    let intResult = parseFloat(evalArray[0]);
     for (let i = 1; i < evalArray.length - 1; i += 2) {
         if (evalArray[i] == "+") {
-            intResult += parseInt(evalArray[i+1]);
+            intResult += parseFloat(evalArray[i+1]);
             
         } else {
-            intResult -= parseInt(evalArray[i+1]);
+            intResult -= parseFloat(evalArray[i+1]);
         }
         
     }
@@ -117,19 +117,31 @@ function addSub(evalArray) {
 }
 
 function multDivide(evalArray) {
+    evalArray = getPercent(evalArray);
     for (let i = 1; i < evalArray.length - 1; i += 2) {
         if (evalArray[i] == "*") {
-            let lastNum = parseInt(evalArray[i - 1]);
-            lastNum *= parseInt(evalArray[i+1]) 
+            let lastNum = parseFloat(evalArray[i - 1]);
+            lastNum *= parseFloat(evalArray[i+1]) 
             evalArray[i-1] = lastNum.toString();
             evalArray.splice(i, 2);
             i -= 2;
         } else if (evalArray[i] == "/") {
-            let lastNum = parseInt(evalArray[i - 1]);
-            lastNum /= parseInt(evalArray[i+1]) 
+            let lastNum = parseFloat(evalArray[i - 1]);
+            lastNum /= parseFloat(evalArray[i+1]) 
             evalArray[i-1] = lastNum.toString();
             evalArray.splice(i, 2);
             i -= 2;
+        }
+    }
+    return evalArray;
+}
+
+function getPercent(evalArray) {
+    for (let i = 0; i < evalArray.length; i++) {
+        if (evalArray[i] == "%") {
+            evalArray[i-1] = (parseFloat(evalArray[i-1]) / 100).toString();
+            evalArray.splice(i, 1);
+            i -= 1;
         }
     }
     return evalArray;
@@ -141,16 +153,33 @@ function getInputArray(str) {
        
     for (let i = 0; i < str.length; i++) {
         if(operators.includes(str[i])) {
-            count += 2;
-            strArray.push(str[i]);
-            strArray.push("");
+            if (strArray[-2] == "%") {
+                count += 1;
+                strArray[-1] += str[i];
+                strArray.push("");
+            }else {
+                count += 2;
+                strArray.push(str[i]);
+                strArray.push("");
+
+            }
         } else {
             strArray[count] += str[i];
     
         }
     }
-    return strArray;
+    return cleanArray(strArray);
 
+}
+
+function cleanArray(array) {
+    for (let i = 0; i < array.length; i++) {
+        if (array[i] == "") {
+            array.splice(i, 1);
+        }
+    }
+
+    return array;
 }
 
 function cleantInput(input) {
@@ -206,6 +235,14 @@ function validateInput (value) {
 
     if (value == "." && lastInput == ".") {
         return false;
+    }
+
+    if (lastInput == "%" && value == "%" || 
+    lastInput == "%" && !operators.includes(value)) {
+        return false;
+    }
+    if (lastInput == "%" && operators.includes(value)) {
+        return true;
     }
 
     if (operators.includes(value)) {
